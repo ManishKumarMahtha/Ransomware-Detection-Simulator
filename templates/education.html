@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Cybersecurity Learning Guide - Ransomware Detection Simulator{% endblock %}
+{% block page_title %}Cybersecurity Education & Technical Foundations{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <!-- Section 1: What is Ransomware? -->
+    <div class="col-12 col-xl-6">
+        <div class="cyber-card h-100 p-4">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="p-2 rounded bg-danger-subtle text-danger border border-danger">
+                    <i class="bi bi-virus fs-3"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold text-white mb-0">1. What is Ransomware?</h5>
+                    <div class="text-muted small">Malware classification and attack anatomy</div>
+                </div>
+            </div>
+
+            <p class="text-light small lh-lg">
+                <strong>Ransomware</strong> is a category of malicious software that blocks access to a victim's computer system or encrypts their files, demanding a ransom payment (typically in cryptocurrency like Bitcoin or Monero) to provide the decryption key.
+            </p>
+
+            <div class="row g-2 mb-3">
+                <div class="col-12 col-md-6">
+                    <div class="p-3 rounded bg-dark border border-secondary border-opacity-50 h-100">
+                        <div class="fw-bold text-info small mb-1"><i class="bi bi-key-fill me-1"></i> Crypto Ransomware</div>
+                        <div class="text-muted small">
+                            Silently locates high-value files (documents, databases, photos) and encrypts them using strong ciphers (e.g., AES-256 + RSA-4096), appending extensions like <code>.locked</code>.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="p-3 rounded bg-dark border border-secondary border-opacity-50 h-100">
+                        <div class="fw-bold text-warning small mb-1"><i class="bi bi-lock-fill me-1"></i> Locker Ransomware</div>
+                        <div class="text-muted small">
+                            Locks the victim out of the operating system interface entirely, displaying full-screen ransom demands without necessarily encrypting underlying disk blocks.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fw-bold text-white small mb-2"><i class="bi bi-exclamation-triangle-fill text-warning me-1"></i> Common Early Warning Signs:</div>
+            <ul class="text-muted small ps-3 mb-0">
+                <li>Sudden spike in disk I/O operations and CPU utilization by unknown processes.</li>
+                <li>Rapid renaming of multiple files with foreign, unrecognized extensions.</li>
+                <li>Presence of new text or HTML instruction files (e.g., <code>README_RESTORE_FILES.txt</code>).</li>
+                <li>Spontaneous termination of security tools, volume shadow copies, and backup agents.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Section 2: Behavioral Detection vs Signature Detection -->
+    <div class="col-12 col-xl-6">
+        <div class="cyber-card h-100 p-4">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="p-2 rounded bg-info-subtle text-info border border-info">
+                    <i class="bi bi-cpu-fill fs-3"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold text-white mb-0">2. Behavioral vs. Signature Detection</h5>
+                    <div class="text-muted small">Next-Generation Antivirus (NGAV) methodologies</div>
+                </div>
+            </div>
+
+            <p class="text-light small lh-lg">
+                Traditional antivirus tools rely primarily on <strong>static signatures</strong> (MD5/SHA256 hashes of known malware executables). Attackers easily bypass signatures by recompiling their code, altering packers, or using polymorphic engines.
+            </p>
+
+            <div class="table-responsive mb-3">
+                <table class="table table-cyber table-sm small">
+                    <thead>
+                        <tr>
+                            <th>Criterion</th>
+                            <th>Signature-Based</th>
+                            <th>Behavioral Heuristics (Our System)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-light">Zero-Day Attacks</td>
+                            <td class="text-danger">Fails (No signature exists)</td>
+                            <td class="text-success fw-bold">Effective (Identifies actions)</td>
+                        </tr>
+                        <tr>
+                            <td class="text-light">Detection Basis</td>
+                            <td class="text-muted">Static file checksum</td>
+                            <td class="text-info">In-flight I/O patterns & velocities</td>
+                        </tr>
+                        <tr>
+                            <td class="text-light">Speed of Defense</td>
+                            <td class="text-muted">Requires signature update</td>
+                            <td class="text-success">Instant automated containment</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="text-muted small mb-0">
+                Our simulator implements <strong>sliding-window behavioral analysis</strong>. Instead of inspecting file contents (which protects privacy and performance), it continuously monitors operation velocity, rapid renaming patterns, and extension tampering.
+            </p>
+        </div>
+    </div>
+
+    <!-- Section 3: Threat Scoring Mathematics -->
+    <div class="col-12 col-xl-6">
+        <div class="cyber-card h-100 p-4">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="p-2 rounded bg-warning-subtle text-warning border border-warning">
+                    <i class="bi bi-calculator-fill fs-3"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold text-white mb-0">3. Mathematical Threat Scoring</h5>
+                    <div class="text-muted small">Transparent multi-factor heuristic calculation</div>
+                </div>
+            </div>
+
+            <p class="text-light small lh-lg">
+                Rather than acting as a black box, the detection engine produces an explainable threat score from 0 to 100 based on weighted behavioral components:
+            </p>
+
+            <div class="p-3 rounded bg-dark border border-secondary border-opacity-50 small font-monospace text-info mb-3">
+                Score = min(100, S_rename + S_extension + S_burst + S_velocity)
+            </div>
+
+            <div class="d-flex flex-column gap-2 small text-muted mb-3">
+                <div>
+                    <strong class="text-white">&bull; S_rename (Max 35 pts):</strong>
+                    <code>min(35.0, (Renames_in_Window / Threshold_rename) &times; 35.0)</code>
+                </div>
+                <div>
+                    <strong class="text-white">&bull; S_extension (Max 40 pts):</strong>
+                    Triggered whenever file extensions are switched to known ransomware patterns (e.g., <code>.locked</code>).
+                </div>
+                <div>
+                    <strong class="text-white">&bull; S_burst (Max 25 pts):</strong>
+                    <code>min(25.0, (Modifications_in_Window / Threshold_mod) &times; 25.0)</code>
+                </div>
+                <div>
+                    <strong class="text-white">&bull; Severity Tiers:</strong>
+                    Low (0&ndash;29), Medium (30&ndash;59), High (60&ndash;79), Critical (80&ndash;100).
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 4: Backup Strategies & Best Practices -->
+    <div class="col-12 col-xl-6">
+        <div class="cyber-card h-100 p-4">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="p-2 rounded bg-success-subtle text-success border border-success">
+                    <i class="bi bi-hdd-stack-fill fs-3"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold text-white mb-0">4. Recovery & Defense in Depth</h5>
+                    <div class="text-muted small">The 3-2-1 backup paradigm and enterprise defenses</div>
+                </div>
+            </div>
+
+            <h6 class="fw-bold text-info small mb-2"><i class="bi bi-shield-lock-fill me-1"></i> The Golden 3-2-1 Backup Rule:</h6>
+            <div class="row g-2 mb-3">
+                <div class="col-4">
+                    <div class="p-2 rounded bg-dark border border-secondary border-opacity-50 text-center h-100">
+                        <div class="fs-4 fw-bold text-info">3</div>
+                        <div class="text-muted small" style="font-size: 0.72rem;">Copies of all critical business data</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="p-2 rounded bg-dark border border-secondary border-opacity-50 text-center h-100">
+                        <div class="fs-4 fw-bold text-success">2</div>
+                        <div class="text-muted small" style="font-size: 0.72rem;">Different storage media types (SSD, Tape)</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="p-2 rounded bg-dark border border-secondary border-opacity-50 text-center h-100">
+                        <div class="fs-4 fw-bold text-warning">1</div>
+                        <div class="text-muted small" style="font-size: 0.72rem;">Offsite, air-gapped or immutable copy</div>
+                    </div>
+                </div>
+            </div>
+
+            <h6 class="fw-bold text-info small mb-2"><i class="bi bi-check2-all me-1"></i> Core Defensive Hygiene:</h6>
+            <ul class="text-muted small ps-3 mb-0">
+                <li><strong>Principle of Least Privilege (PoLP):</strong> Restrict write access to network shares.</li>
+                <li><strong>Network Segmentation:</strong> Isolate critical operational databases from employee workstations.</li>
+                <li><strong>Multi-Factor Authentication (MFA):</strong> Mandate MFA on all remote desktop (RDP) access.</li>
+                <li><strong>Patch Management:</strong> Regularly patch operating systems and applications to close CVEs.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

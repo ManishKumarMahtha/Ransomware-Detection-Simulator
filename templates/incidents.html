@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Incident History - Ransomware Detection Simulator{% endblock %}
+{% block page_title %}Security Incident Audit Log & Forensics{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+    <!-- Filters & Action Bar -->
+    <div class="col-12">
+        <div class="cyber-card p-3">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div class="d-flex flex-wrap align-items-center gap-3">
+                    <!-- Severity Filter -->
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="text-muted small fw-semibold text-nowrap">Severity:</label>
+                        <select id="filterSeverity" class="form-select form-select-sm form-select-cyber" onchange="fetchIncidents()">
+                            <option value="ALL">All Severities</option>
+                            <option value="CRITICAL">Critical</option>
+                            <option value="HIGH">High</option>
+                            <option value="MEDIUM">Medium</option>
+                            <option value="LOW">Low</option>
+                        </select>
+                    </div>
+
+                    <!-- Status Filter -->
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="text-muted small fw-semibold text-nowrap">Status:</label>
+                        <select id="filterStatus" class="form-select form-select-sm form-select-cyber" onchange="fetchIncidents()">
+                            <option value="ALL">All Statuses</option>
+                            <option value="Open">Open</option>
+                            <option value="Under Investigation">Under Investigation</option>
+                            <option value="Mitigated">Mitigated</option>
+                            <option value="False Positive">False Positive</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-info" onclick="fetchIncidents()">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                    </button>
+                    <a href="{{ url_for('api_export_csv') }}" class="btn btn-sm btn-success fw-semibold">
+                        <i class="bi bi-file-earmark-spreadsheet me-1"></i> Export CSV
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Incidents Table -->
+    <div class="col-12">
+        <div class="cyber-card">
+            <div class="cyber-card-header">
+                <span class="fw-semibold text-white">
+                    <i class="bi bi-shield-shaded text-info me-2"></i> Logged Ransomware Behavioral Incidents
+                </span>
+                <span id="incidentTotalCountBadge" class="badge bg-secondary">0 Recorded</span>
+            </div>
+            <div class="cyber-card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-cyber table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Incident ID</th>
+                                <th>Timestamp</th>
+                                <th>Severity</th>
+                                <th>Score</th>
+                                <th>Event Type</th>
+                                <th>Primary Detection Reason</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="incidentsTableBody">
+                            <tr>
+                                <td colspan="8" class="text-center text-muted py-4">Loading recorded incidents...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Detailed Forensic Modal -->
+<div class="modal fade" id="incidentDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark border-secondary text-light">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title fw-bold text-white d-flex align-items-center gap-2">
+                    <i class="bi bi-shield-fill-exclamation text-danger"></i>
+                    <span id="modalIncidentId">INC-0000</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3 mb-3">
+                    <div class="col-6 col-md-3">
+                        <div class="p-2 rounded bg-black border border-secondary border-opacity-50 text-center">
+                            <div class="text-muted small">Severity</div>
+                            <div id="modalSeverity" class="fw-bold mt-1">CRITICAL</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-2 rounded bg-black border border-secondary border-opacity-50 text-center">
+                            <div class="text-muted small">Threat Score</div>
+                            <div id="modalThreatScore" class="fw-bold fs-5 text-danger mt-1">95/100</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-2 rounded bg-black border border-secondary border-opacity-50 text-center">
+                            <div class="text-muted small">Event Type</div>
+                            <div id="modalEventType" class="fw-bold text-info mt-1">RENAME</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-2 rounded bg-black border border-secondary border-opacity-50 text-center">
+                            <div class="text-muted small">Investigation</div>
+                            <div id="modalStatus" class="fw-bold text-warning mt-1">Open</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="fw-bold text-white small mb-1">Primary Detection Reason:</div>
+                    <div id="modalPrimaryReason" class="p-2 rounded bg-black text-warning font-monospace small"></div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="fw-bold text-white small mb-1">Triggered Detection Rules:</div>
+                    <ul id="modalReasonsList" class="ps-3 text-secondary small mb-0"></ul>
+                </div>
+
+                <div class="mb-3">
+                    <div class="fw-bold text-white small mb-1">Mathematical Attribution Formula:</div>
+                    <pre id="modalFormula" class="p-2 rounded bg-black text-info small mb-0 font-monospace"></pre>
+                </div>
+
+                <div class="mb-3">
+                    <div class="fw-bold text-white small mb-1">Machine Learning Feature Vector:</div>
+                    <pre id="modalMLVector" class="p-2 rounded bg-black text-light small mb-0 font-monospace"></pre>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary d-flex justify-content-between">
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-warning" onclick="changeStatusFromModal('Under Investigation')">Mark Investigating</button>
+                    <button class="btn btn-sm btn-outline-success" onclick="changeStatusFromModal('Mitigated')">Mark Mitigated</button>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="changeStatusFromModal('False Positive')">Mark False Positive</button>
+                </div>
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/incidents.js') }}"></script>
+{% endblock %}

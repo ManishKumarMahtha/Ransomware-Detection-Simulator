@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}File Monitoring - Ransomware Detection Simulator{% endblock %}
+{% block page_title %}Watchdog Real-Time File System Observer{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+    <!-- Configuration & Control Column -->
+    <div class="col-12 col-xl-5">
+        <div class="cyber-card mb-3">
+            <div class="cyber-card-header">
+                <span class="fw-semibold text-white">
+                    <i class="bi bi-shield-check text-info me-2"></i> Safe Directory Observer Configuration
+                </span>
+            </div>
+            <div class="cyber-card-body">
+                <div class="mb-3">
+                    <label for="monitoredPathInput" class="form-label text-light small fw-semibold">Target Directory for Monitoring</label>
+                    <div class="input-group">
+                        <input type="text" id="monitoredPathInput" class="form-control form-control-cyber" placeholder="Enter absolute directory path">
+                        <button class="btn btn-outline-secondary text-info" type="button" onclick="useDefaultSandboxPath()">
+                            <i class="bi bi-arrow-repeat me-1"></i> Sandbox
+                        </button>
+                    </div>
+                    <div id="pathValidationFeedback" class="small mt-1 text-muted">
+                        Checking path boundary...
+                    </div>
+                </div>
+
+                <div class="alert alert-secondary border-secondary p-3 small mb-3">
+                    <div class="fw-bold text-white mb-1"><i class="bi bi-info-circle text-info me-1"></i> Safety Protocol:</div>
+                    <ul class="mb-0 ps-3 text-muted">
+                        <li>Root drives (<code>C:\</code>) and system paths (<code>C:\Windows</code>) are strictly blocked.</li>
+                        <li>File contents are <strong>never inspected or read</strong> to ensure zero system overhead and total privacy.</li>
+                        <li>Only file event metadata (creation, renaming, modification) is fed into the detection sliding window.</li>
+                    </ul>
+                </div>
+
+                <!-- Control Buttons -->
+                <div class="d-flex gap-2">
+                    <button id="btnStartMonitor" class="btn btn-success flex-fill fw-bold" onclick="startMonitoring()">
+                        <i class="bi bi-eye-fill me-1"></i> Start Monitoring
+                    </button>
+                    <button id="btnStopMonitor" class="btn btn-danger flex-fill fw-bold" onclick="stopMonitoring()" disabled>
+                        <i class="bi bi-eye-slash-fill me-1"></i> Stop Monitoring
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Telemetry Stats Card -->
+        <div class="cyber-card">
+            <div class="cyber-card-header">
+                <span class="fw-semibold text-white">
+                    <i class="bi bi-cpu text-info me-2"></i> Observer Telemetry
+                </span>
+                <span id="monitorStatusBadge" class="badge bg-secondary">INACTIVE</span>
+            </div>
+            <div class="cyber-card-body">
+                <div class="row g-2 text-center">
+                    <div class="col-6">
+                        <div class="p-3 rounded border border-secondary border-opacity-25" style="background-color: #0b1120;">
+                            <div class="text-muted small text-uppercase">Events Captured</div>
+                            <div id="monitorEventCount" class="fs-3 fw-bold text-info">0</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 rounded border border-secondary border-opacity-25" style="background-color: #0b1120;">
+                            <div class="text-muted small text-uppercase">Active Uptime</div>
+                            <div id="monitorUptime" class="fs-3 fw-bold text-light">0s</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-3 small text-muted">
+                    <span>Actively Watching: </span>
+                    <div id="activeMonitoredPathDisplay" class="text-info fw-semibold text-break mt-1">None</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Live Watchdog Events -->
+    <div class="col-12 col-xl-7">
+        <div class="cyber-card h-100">
+            <div class="cyber-card-header">
+                <span class="fw-semibold text-white">
+                    <i class="bi bi-broadcast text-info me-2"></i> Live Watchdog File System Stream
+                </span>
+                <span class="badge bg-info-subtle text-info">OS Hook Feed</span>
+            </div>
+            <div class="cyber-card-body p-0">
+                <div class="table-responsive" style="max-height: 480px;">
+                    <table class="table table-cyber table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Operation</th>
+                                <th>File Name</th>
+                                <th>Details / Transition</th>
+                            </tr>
+                        </thead>
+                        <tbody id="monitorEventsTableBody">
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-4">
+                                    Observer is idle. Click 'Start Monitoring' to stream OS file system events.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/monitoring.js') }}"></script>
+{% endblock %}

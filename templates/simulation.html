@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}Simulation Engine - Ransomware Detection Simulator{% endblock %}
+{% block page_title %}Safe Behavioral Simulation Control Center{% endblock %}
+
+{% block content %}
+<!-- Safety Guarantee Notice -->
+<div class="alert alert-info border-info d-flex align-items-center justify-content-between mb-4 shadow-sm" role="alert">
+    <div class="d-flex align-items-center gap-3">
+        <i class="bi bi-shield-check fs-2 text-info"></i>
+        <div>
+            <h6 class="fw-bold mb-0 text-white">Safe Academic Demonstration Environment</h6>
+            <div class="small text-light">
+                All file operations are restricted to the dedicated sandbox directory.
+                No real ransomware, encryption, or destructive payloads are used. Host system files are never modified.
+            </div>
+        </div>
+    </div>
+    <span class="badge bg-dark border border-info text-info px-3 py-2">
+        <i class="bi bi-folder-symlink me-1"></i> Sandbox Isolated
+    </span>
+</div>
+
+<div class="row g-3">
+    <!-- Left Column: Controls & Profiles -->
+    <div class="col-12 col-xl-5">
+        <!-- Profile Selection Card -->
+        <div class="cyber-card mb-3">
+            <div class="cyber-card-header">
+                <span class="fw-semibold text-white">
+                    <i class="bi bi-gear-wide-connected text-info me-2"></i> Select Simulation Profile
+                </span>
+            </div>
+            <div class="cyber-card-body">
+                <div class="d-flex flex-column gap-2 mb-3">
+                    <!-- Benign Profile -->
+                    <label class="p-3 rounded border border-secondary border-opacity-50 cursor-pointer d-flex gap-3 align-items-start" style="background-color: #0d1527;">
+                        <input type="radio" name="simProfile" value="benign" checked class="mt-1 form-check-input">
+                        <div>
+                            <div class="fw-bold text-success d-flex align-items-center gap-2">
+                                <i class="bi bi-person-check-fill"></i> Benign User Activity
+                            </div>
+                            <div class="text-muted small">
+                                Normal human typing intervals, standard document editing, and benign file renaming. Baseline testing.
+                            </div>
+                        </div>
+                    </label>
+
+                    <!-- Ransomware Burst -->
+                    <label class="p-3 rounded border border-secondary border-opacity-50 cursor-pointer d-flex gap-3 align-items-start" style="background-color: #0d1527;">
+                        <input type="radio" name="simProfile" value="ransomware_burst" class="mt-1 form-check-input">
+                        <div>
+                            <div class="fw-bold text-danger d-flex align-items-center gap-2">
+                                <i class="bi bi-lightning-charge-fill"></i> Ransomware Burst Attack
+                            </div>
+                            <div class="text-muted small">
+                                Rapid high-velocity file overwrites, automated bulk renaming to <code>.locked</code>, and dropping ransom note.
+                            </div>
+                        </div>
+                    </label>
+
+                    <!-- Stealth Profile -->
+                    <label class="p-3 rounded border border-secondary border-opacity-50 cursor-pointer d-flex gap-3 align-items-start" style="background-color: #0d1527;">
+                        <input type="radio" name="simProfile" value="stealth" class="mt-1 form-check-input">
+                        <div>
+                            <div class="fw-bold text-warning d-flex align-items-center gap-2">
+                                <i class="bi bi-clock-history"></i> Slow Stealth Simulation
+                            </div>
+                            <div class="text-muted small">
+                                Paced, delayed file tampering with <code>.enc</code> extension to simulate evasion of basic rate limits.
+                            </div>
+                        </div>
+                    </label>
+
+                    <!-- Extension Tampering -->
+                    <label class="p-3 rounded border border-secondary border-opacity-50 cursor-pointer d-flex gap-3 align-items-start" style="background-color: #0d1527;">
+                        <input type="radio" name="simProfile" value="extension_tampering" class="mt-1 form-check-input">
+                        <div>
+                            <div class="fw-bold text-info d-flex align-items-center gap-2">
+                                <i class="bi bi-file-earmark-diff-fill"></i> Rapid Extension Tampering
+                            </div>
+                            <div class="text-muted small">
+                                Rapid renaming of files to multiple suspicious extensions (<code>.crypto</code>, <code>.crypted</code>).
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Speed Control -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between text-light small mb-1">
+                        <span>Simulation Speed Multiplier:</span>
+                        <span id="speedValueLabel" class="fw-bold text-info">1.0x</span>
+                    </div>
+                    <input type="range" class="form-range" id="speedSlider" min="0.5" max="4.0" step="0.5" value="1.0" oninput="updateSpeedLabel(this.value)">
+                </div>
+
+                <!-- Action Control Buttons -->
+                <div class="d-flex flex-wrap gap-2">
+                    <button id="btnStart" class="btn btn-success flex-fill fw-bold" onclick="startSimulation()">
+                        <i class="bi bi-play-fill me-1"></i> Start
+                    </button>
+                    <button id="btnPause" class="btn btn-warning flex-fill fw-bold" onclick="pauseSimulation()" disabled>
+                        <i class="bi bi-pause-fill me-1"></i> Pause
+                    </button>
+                    <button id="btnResume" class="btn btn-primary flex-fill fw-bold d-none" onclick="resumeSimulation()">
+                        <i class="bi bi-play-fill me-1"></i> Resume
+                    </button>
+                    <button id="btnStop" class="btn btn-danger flex-fill fw-bold" onclick="stopSimulation()" disabled>
+                        <i class="bi bi-stop-fill me-1"></i> Stop
+                    </button>
+                    <button id="btnReset" class="btn btn-outline-secondary flex-fill text-light" onclick="resetSimulation()">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Sandbox
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Card -->
+        <div class="cyber-card">
+            <div class="cyber-card-header">
+                <span class="fw-semibold text-white">
+                    <i class="bi bi-bar-chart-steps text-info me-2"></i> Execution Status
+                </span>
+                <span id="simStateBadge" class="badge bg-secondary">IDLE</span>
+            </div>
+            <div class="cyber-card-body">
+                <div class="d-flex justify-content-between small text-muted mb-1">
+                    <span>Progress:</span>
+                    <span id="progressText" class="text-info fw-bold">0%</span>
+                </div>
+                <div class="progress mb-3" style="height: 10px; background-color: #0b1120;">
+                    <div id="simProgressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-info" style="width: 0%"></div>
+                </div>
+
+                <div class="d-flex justify-content-between small text-muted">
+                    <span>Current Step: <strong id="currentStepText" class="text-white">0</strong> / <span id="totalStepsText">0</span></span>
+                    <span>Sandbox Target: <code class="text-info">demo_data/sandbox/</code></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Terminal Feed & Sandbox Explorer -->
+    <div class="col-12 col-xl-7">
+        <!-- Real-time Terminal Log -->
+        <div class="cyber-card mb-3">
+            <div class="cyber-card-header">
+                <span class="fw-semibold text-white">
+                    <i class="bi bi-terminal text-info me-2"></i> Simulation Activity Stream (Terminal Feed)
+                </span>
+                <button class="btn btn-sm btn-outline-secondary text-muted" onclick="clearTerminalView()">
+                    <i class="bi bi-eraser"></i> Clear
+                </button>
+            </div>
+            <div class="cyber-card-body p-2">
+                <div id="simulationTerminal" class="cyber-terminal">
+                    <div class="term-line-info">[SYSTEM READY] Simulation Engine initialized in dedicated sandbox.</div>
+                    <div class="term-line-info">[WAITING] Select a profile and click 'Start' to begin demonstration.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sandbox File Explorer -->
+        <div class="cyber-card">
+            <div class="cyber-card-header">
+                <span class="fw-semibold text-white">
+                    <i class="bi bi-folder2-open text-info me-2"></i> Sandbox Directory Contents
+                </span>
+                <span id="sandboxFileCountBadge" class="badge bg-info-subtle text-info">0 Files</span>
+            </div>
+            <div class="cyber-card-body p-0">
+                <div class="table-responsive" style="max-height: 220px;">
+                    <table class="table table-cyber table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>File Name</th>
+                                <th>Current Extension</th>
+                                <th>Classification</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sandboxFilesTableBody">
+                            <tr>
+                                <td colspan="3" class="text-center text-muted py-3">Sandbox directory is currently empty.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/simulation.js') }}"></script>
+{% endblock %}

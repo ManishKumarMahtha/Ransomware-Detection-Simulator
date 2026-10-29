@@ -1,0 +1,32 @@
+# Python Virtual Environment
+venv/
+env/
+.venv/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Pytest & Coverage Cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local Temporary Files & Logs
+*.log
+flask_out.log
+flask_err.log
+
+# Temporary Sandbox Test Outputs (keep folder structure, exclude dummy files if desired)
+demo_data/sandbox/*
+!demo_data/sandbox/.gitkeep
+
+# Project archives
+*.zip
+
+# OS artifacts
+Thumbs.db
+Desktop.ini
+.DS_Store

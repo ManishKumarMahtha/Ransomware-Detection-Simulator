@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Threat Alerts - Ransomware Detection Simulator{% endblock %}
+{% block page_title %}Active Threat Alerts & Incident Response{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+    <!-- Active Response Banner -->
+    <div class="col-12">
+        <div class="cyber-card p-3 border-danger border-opacity-50" style="background: linear-gradient(90deg, rgba(239, 68, 68, 0.1) 0%, rgba(15, 23, 42, 0.6) 100%);">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="p-2 rounded bg-danger-subtle border border-danger text-danger">
+                        <i class="bi bi-shield-slash-fill fs-3"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold text-white mb-0">Emergency Incident Response Center</h6>
+                        <div class="text-muted small">
+                            Behavioral triggers detected exceeding threat threshold (&ge; 30).
+                            Execute defensive containment or investigate root causes.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-danger fw-bold" onclick="emergencyStopSimulation()">
+                        <i class="bi bi-x-octagon-fill me-1"></i> Terminate Active Simulation
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary text-light" onclick="refreshAlerts()">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Refresh Feed
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Threat Feed -->
+    <div class="col-12">
+        <div class="cyber-card">
+            <div class="cyber-card-header">
+                <span class="fw-semibold text-white">
+                    <i class="bi bi-bell-fill text-danger me-2"></i> Real-Time Alerts Feed
+                </span>
+                <span id="alertsCountBadge" class="badge bg-danger">0 Alerts</span>
+            </div>
+            <div class="cyber-card-body p-0">
+                <div id="alertsContainer" class="p-3 d-flex flex-column gap-3">
+                    <div class="text-center text-muted py-5">
+                        <i class="bi bi-shield-check text-success fs-1 d-block mb-2"></i>
+                        No active threats detected. System operations are currently benign.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/alerts.js') }}"></script>
+{% endblock %}

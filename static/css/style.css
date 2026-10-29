@@ -1,0 +1,274 @@
+/* ==========================================================================
+   RANSOMWARE DETECTION SIMULATOR - CYBERSECURITY DARK UI THEME
+   Tailored for CSE AI/ML Major Project Demonstrations
+   ========================================================================== */
+
+:root {
+    --bg-dark: #0a0f1d;
+    --card-dark: #111827;
+    --card-border: #1e293b;
+    --card-hover: #1e293b;
+    --text-primary: #f8fafc;
+    --text-muted: #94a3b8;
+    --accent-blue: #38bdf8;
+    --accent-cyan: #06b6d4;
+    --cyber-green: #10b981;
+    --cyber-yellow: #f59e0b;
+    --cyber-orange: #f97316;
+    --cyber-red: #ef4444;
+    --sidebar-width: 260px;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Sidebar Styling */
+#sidebar {
+    width: var(--sidebar-width);
+    background-color: #0d1322;
+    border-right: 1px solid var(--card-border);
+    min-height: 100vh;
+    transition: all 0.3s;
+    z-index: 1000;
+}
+
+#sidebar .brand-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+#sidebar .nav-link {
+    color: var(--text-muted);
+    padding: 0.8rem 1.5rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+#sidebar .nav-link:hover {
+    color: var(--accent-blue);
+    background-color: rgba(56, 189, 248, 0.08);
+}
+
+#sidebar .nav-link.active {
+    color: #ffffff;
+    background-color: rgba(56, 189, 248, 0.15);
+    border-left-color: var(--accent-blue);
+    font-weight: 600;
+}
+
+/* Main Content Area */
+#content-wrapper {
+    margin-left: var(--sidebar-width);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Top Navbar */
+.top-navbar {
+    background-color: #0d1322;
+    border-bottom: 1px solid var(--card-border);
+    padding: 0.75rem 1.5rem;
+}
+
+/* Cards & Panels */
+.cyber-card {
+    background-color: var(--card-dark);
+    border: 1px solid var(--card-border);
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cyber-card:hover {
+    border-color: #334155;
+}
+
+.cyber-card-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cyber-card-body {
+    padding: 1.25rem;
+}
+
+/* Stat KPI Cards */
+.stat-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+}
+
+.stat-card.blue::after { background-color: var(--accent-blue); }
+.stat-card.green::after { background-color: var(--cyber-green); }
+.stat-card.yellow::after { background-color: var(--cyber-yellow); }
+.stat-card.red::after { background-color: var(--cyber-red); }
+
+.stat-val {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Cyber Badges */
+.badge-low {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-medium {
+    background-color: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge-high {
+    background-color: rgba(249, 115, 22, 0.15);
+    color: #fb923c;
+    border: 1px solid rgba(249, 115, 22, 0.3);
+}
+
+.badge-critical {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    animation: pulseGlow 1.8s infinite;
+}
+
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+/* Tables */
+.table-cyber {
+    color: var(--text-primary);
+    background-color: transparent;
+}
+
+.table-cyber th {
+    background-color: rgba(15, 23, 42, 0.6);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--card-border);
+    padding: 0.75rem 1rem;
+}
+
+.table-cyber td {
+    border-bottom: 1px solid rgba(30, 41, 59, 0.6);
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+}
+
+.table-cyber tbody tr:hover {
+    background-color: rgba(30, 41, 59, 0.4);
+}
+
+/* Terminal Console View */
+.cyber-terminal {
+    background-color: #050811;
+    border: 1px solid #1e293b;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.85rem;
+    height: 320px;
+    overflow-y: auto;
+    color: #38bdf8;
+    line-height: 1.5;
+}
+
+.term-line-info { color: #38bdf8; }
+.term-line-warn { color: #fbbf24; }
+.term-line-alert { color: #f87171; font-weight: bold; }
+.term-line-error { color: #ef4444; font-weight: bold; }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #0a0f1d;
+}
+::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #334155;
+}
+
+/* Pulsing Status Dot */
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.status-indicator.online {
+    background-color: var(--cyber-green);
+    box-shadow: 0 0 8px var(--cyber-green);
+}
+.status-indicator.busy {
+    background-color: var(--cyber-yellow);
+    box-shadow: 0 0 8px var(--cyber-yellow);
+}
+.status-indicator.alert {
+    background-color: var(--cyber-red);
+    box-shadow: 0 0 8px var(--cyber-red);
+}
+.status-indicator.offline {
+    background-color: #64748b;
+}
+
+/* Form Controls in Dark Mode */
+.form-control-cyber, .form-select-cyber {
+    background-color: #0b1120;
+    border: 1px solid #1e293b;
+    color: #f8fafc;
+    border-radius: 0.5rem;
+    padding: 0.6rem 0.85rem;
+}
+.form-control-cyber:focus, .form-select-cyber:focus {
+    background-color: #0e1628;
+    border-color: var(--accent-blue);
+    color: #ffffff;
+    box-shadow: 0 0 0 0.2rem rgba(56, 189, 248, 0.25);
+    outline: none;
+}

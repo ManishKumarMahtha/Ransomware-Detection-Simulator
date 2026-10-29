@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Detection Configuration - Ransomware Detection Simulator{% endblock %}
+{% block page_title %}Detection Engine & AI Calibration{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+    <!-- Configuration Form -->
+    <div class="col-12 col-xl-8">
+        <div class="cyber-card">
+            <div class="cyber-card-header">
+                <span class="fw-semibold text-white">
+                    <i class="bi bi-sliders text-info me-2"></i> Behavioral Heuristic Thresholds
+                </span>
+                <span class="badge bg-info-subtle text-info">Dynamic Parameters</span>
+            </div>
+            <div class="cyber-card-body">
+                <form id="settingsForm" onsubmit="saveSettings(event)">
+                    <div class="row g-3 mb-4">
+                        <!-- Sliding Window Seconds -->
+                        <div class="col-md-6">
+                            <label for="cfgBurstWindow" class="form-label text-light small fw-semibold">
+                                Sliding Analysis Window (Seconds)
+                            </label>
+                            <input type="number" id="cfgBurstWindow" class="form-control form-control-cyber" min="1" max="60" step="0.5" required>
+                            <div class="form-text text-muted small">Window duration over which event velocities and bursts are computed.</div>
+                        </div>
+
+                        <!-- Rename Threshold -->
+                        <div class="col-md-6">
+                            <label for="cfgRenameThreshold" class="form-label text-light small fw-semibold">
+                                File Rename Burst Threshold
+                            </label>
+                            <input type="number" id="cfgRenameThreshold" class="form-control form-control-cyber" min="1" max="50" required>
+                            <div class="form-text text-muted small">Number of renames in window to flag suspicious rename burst.</div>
+                        </div>
+
+                        <!-- Modification Threshold -->
+                        <div class="col-md-6">
+                            <label for="cfgModThreshold" class="form-label text-light small fw-semibold">
+                                Rapid Modification Threshold
+                            </label>
+                            <input type="number" id="cfgModThreshold" class="form-control form-control-cyber" min="1" max="100" required>
+                            <div class="form-text text-muted small">Number of rapid file writes in window triggering burst alert.</div>
+                        </div>
+
+                        <!-- Velocity Total Threshold -->
+                        <div class="col-md-6">
+                            <label for="cfgVelocityThreshold" class="form-label text-light small fw-semibold">
+                                Total Event Velocity Threshold
+                            </label>
+                            <input type="number" id="cfgVelocityThreshold" class="form-control form-control-cyber" min="2" max="200" required>
+                            <div class="form-text text-muted small">Total I/O events within window before velocity bonus triggers.</div>
+                        </div>
+                    </div>
+
+                    <!-- Weights Section -->
+                    <div class="p-3 rounded bg-dark border border-secondary border-opacity-50 mb-4">
+                        <div class="fw-bold text-white small mb-3">
+                            <i class="bi bi-calculator text-info me-1"></i> Threat Score Weight Contributions (Total Heuristic Base = 100)
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label text-muted small">Rename Weight</label>
+                                <input type="number" id="cfgRenameWeight" class="form-control form-control-cyber" min="0" max="60" step="1">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label text-muted small">Suspicious Extension Weight</label>
+                                <input type="number" id="cfgExtWeight" class="form-control form-control-cyber" min="0" max="60" step="1">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label text-muted small">Modification Burst Weight</label>
+                                <input type="number" id="cfgBurstWeight" class="form-control form-control-cyber" min="0" max="60" step="1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Suspicious Extensions List -->
+                    <div class="mb-4">
+                        <label for="cfgSuspiciousExts" class="form-label text-light small fw-semibold">
+                            Suspicious Ransomware Extensions (Comma separated)
+                        </label>
+                        <input type="text" id="cfgSuspiciousExts" class="form-control form-control-cyber" required>
+                        <div class="form-text text-muted small">Files altered to these extensions automatically trigger high-severity indicators.</div>
+                    </div>
+
+                    <!-- Toggles -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="form-check form-switch p-3 rounded border border-secondary border-opacity-25" style="background-color: #0b1120;">
+                                <input class="form-check-input" type="checkbox" id="cfgMLEnabled">
+                                <label class="form-check-label text-light fw-semibold ms-2" for="cfgMLEnabled">
+                                    Scikit-Learn ML Classifier
+                                </label>
+                                <div class="text-muted small ms-2">Enable AI/ML Random Forest behavioral prediction.</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-check form-switch p-3 rounded border border-secondary border-opacity-25" style="background-color: #0b1120;">
+                                <input class="form-check-input" type="checkbox" id="cfgAutoMitigate">
+                                <label class="form-check-label text-light fw-semibold ms-2" for="cfgAutoMitigate">
+                                    Simulated Auto-Containment
+                                </label>
+                                <div class="text-muted small ms-2">Auto-pause simulation if threat score reaches &ge; 80 (Critical).</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-info fw-bold px-4">
+                            <i class="bi bi-save me-1"></i> Save Configuration
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary text-light" onclick="resetToDefaults()">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i> Reset to Defaults
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI/ML Diagnostics Column -->
+    <div class="col-12 col-xl-4">
+        <div class="cyber-card mb-3">
+            <div class="cyber-card-header">
+                <span class="fw-semibold text-white">
+                    <i class="bi bi-cpu text-info me-2"></i> Machine Learning Diagnostics
+                </span>
+            </div>
+            <div class="cyber-card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-muted small">Classifier Architecture:</span>
+                    <span class="badge bg-primary-subtle text-primary">Random Forest (n=40)</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-muted small">Training Samples:</span>
+                    <span id="mlSampleCount" class="fw-bold text-white">1,500</span>
+                </div>
+
+                <div class="fw-semibold text-white small mb-2">Feature Importance Weights:</div>
+                <div id="mlFeatureImportanceList" class="d-flex flex-column gap-2 small">
+                    <!-- Dynamic Feature Importances -->
+                </div>
+
+                <div class="alert alert-dark border-secondary mt-3 p-2 small text-muted">
+                    <i class="bi bi-info-circle text-info me-1"></i>
+                    Trained on synthetic behavioral vectors. Used for academic demonstration of AI-driven anomaly detection.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+{% endblock %}
